@@ -243,4 +243,7 @@
 
     <!-- Default for Settings.System.TIME_12_24 -->
     <string name="def_time_format" translatable="false">12</string>
+
+    <!-- Default for Settings.System.TEXT_SHOW_PASSWORD -->
+    <bool name="def_text_show_password">false</bool>
 </resources>
