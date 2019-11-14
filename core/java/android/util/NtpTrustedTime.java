@@ -44,6 +44,7 @@ public class NtpTrustedTime implements TrustedTime {
     private static Context sContext;
 
     private final String mServer;
+    private final String mNtpMode;
     private final long mTimeout;
 
     private ConnectivityManager mCM;
@@ -59,10 +60,11 @@ public class NtpTrustedTime implements TrustedTime {
     private static int mNtpRetriesMax = 0;
     private static final String BACKUP_SERVER = "persist.backup.ntpServer";
 
-    private NtpTrustedTime(String server, long timeout) {
+    private NtpTrustedTime(String server, long timeout, String ntpMode) {
         if (LOGD) Log.d(TAG, "creating NtpTrustedTime using " + server);
         mServer = server;
         mTimeout = timeout;
+        mNtpMode = ntpMode;
     }
 
     @UnsupportedAppUsage
@@ -71,15 +73,39 @@ public class NtpTrustedTime implements TrustedTime {
             final Resources res = context.getResources();
             final ContentResolver resolver = context.getContentResolver();
 
+            final String defaultNtpMode = res.getString(
+                    com.android.internal.R.string.config_ntpMode);
+            final String ntpMode =
+                    Settings.Global.getString(resolver, Settings.Global.NTP_MODE) != null ?
+                    Settings.Global.getString(resolver, Settings.Global.NTP_MODE) :
+                    defaultNtpMode;
+
             final long defaultTimeout = res.getInteger(
                     com.android.internal.R.integer.config_ntpTimeout);
 
-            final String server = Settings.Global.getString(
-                    resolver, Settings.Global.NTP_SERVER);
             final long timeout = Settings.Global.getLong(
                     resolver, Settings.Global.NTP_TIMEOUT, defaultTimeout);
 
-            sSingleton = new NtpTrustedTime(server, timeout);
+            String defaultServer;
+            String secureServer;
+
+            switch(ntpMode) {
+                case "https":
+                    defaultServer = res.getString(
+                            com.android.internal.R.string.config_httpsTimeServer);
+                    secureServer = Settings.Global.getString(
+                            resolver, Settings.Global.HTTPS_TIME_SERVER);
+                    break;
+                default:
+                    defaultServer = res.getString(
+                            com.android.internal.R.string.config_ntpServer);
+                    secureServer = Settings.Global.getString(
+                            resolver, Settings.Global.NTP_SERVER);
+                    break;
+            }
+
+            final String server = secureServer != null ? secureServer : defaultServer;
+            sSingleton = new NtpTrustedTime(server, timeout, ntpMode);
             sContext = context;
 
             final String sserver_prop = Settings.Global.getString(
@@ -139,10 +165,10 @@ public class NtpTrustedTime implements TrustedTime {
             return false;
         }
 
-
         if (LOGD) Log.d(TAG, "forceRefresh() from cache miss");
-        final SntpClient client = new SntpClient();
 
+        final SntpClient client = new SntpClient();
+        client.setNtpMode(mNtpMode);
         String targetServer = realServer;
         if (getBackupmode()) {
             setBackupmode(false);
