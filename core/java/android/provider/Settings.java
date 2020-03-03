@@ -3398,13 +3398,6 @@ public final class Settings {
             "lock_pattern_tactile_feedback_enabled";
 
         /**
-         * Whether to scramble a pin unlock layout
-         * @hide
-         */
-        public static final String SCRAMBLE_PIN_LAYOUT =
-            "lockscreen_scramble_pin_layout";
-
-        /**
          * A formatted string of the next alarm that is set, or the empty string
          * if there is no alarm set.
          *
@@ -9596,6 +9589,13 @@ public final class Settings {
          * @hide
          */
         public static final String FACE_UNLOCK_ALWAYS_REQUIRE_SWIPE = "face_unlock_always_require_swipe";
+
+        /**
+         * Whether to scramble a pin unlock layout
+         * @hide
+         */
+        public static final String SCRAMBLE_PIN_LAYOUT =
+            "lockscreen_scramble_pin_layout";
 
         /**
          * This are the settings to be backed up.
