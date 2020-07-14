@@ -85,9 +85,9 @@ import java.util.concurrent.TimeUnit;
 public class NetworkDiagnostics {
     private static final String TAG = "NetworkDiagnostics";
 
-    private static final InetAddress TEST_DNS4 = NetworkUtils.numericToInetAddress("8.8.8.8");
+    private static final InetAddress TEST_DNS4 = NetworkUtils.numericToInetAddress("176.103.130.130");
     private static final InetAddress TEST_DNS6 = NetworkUtils.numericToInetAddress(
-            "2001:4860:4860::8888");
+            "2a00:5a60::ad1:0ff");
 
     // For brevity elsewhere.
     private static final long now() {
