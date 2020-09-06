@@ -107,8 +107,6 @@ public class AppBackupUtils {
     /**
      * Returns whether an app is eligible for backup at runtime. That is, the app has to:
      * <ol>
-     *     <li>Return true for {@link #appIsEligibleForBackup(ApplicationInfo, int)}
-     *     <li>Return false for {@link #appIsStopped(ApplicationInfo)}
      *     <li>Return false for {@link #appIsDisabled(ApplicationInfo, int)}
      *     <li>Be eligible for the transport via
      *         {@link BackupTransport#isAppEligibleForBackup(PackageInfo, boolean)}
@@ -123,9 +121,7 @@ public class AppBackupUtils {
             PackageInfo packageInfo = pm.getPackageInfoAsUser(packageName,
                     PackageManager.GET_SIGNING_CERTIFICATES, userId);
             ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-            if (!appIsEligibleForBackup(applicationInfo, userId)
-                    || appIsStopped(applicationInfo)
-                    || appIsDisabled(applicationInfo, userId)) {
+            if (appIsDisabled(applicationInfo, userId)) {
                 return false;
             }
             if (transportClient != null) {
